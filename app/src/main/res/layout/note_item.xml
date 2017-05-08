@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<data>
+
+		<variable
+			name="note"
+			type="com.arconsis.mvvmnotesample.data.NoteDto" />
+	</data>
+
+	<android.support.v7.widget.CardView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="4dp"
+		android:clickable="true"
+		android:foreground="?android:selectableItemBackground">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="4dp"
+			android:orientation="vertical">
+
+			<TextView
+				android:id="@+id/note_title"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@{note.title}"
+				android:textColor="@android:color/black"
+				android:textSize="16sp"
+				tools:text="Title" />
+
+			<TextView
+				android:id="@+id/note_msg"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@{note.message}"
+				android:textColor="@android:color/darker_gray"
+				android:textSize="12sp"
+				tools:text="Message" />
+		</LinearLayout>
+	</android.support.v7.widget.CardView>
+</layout>

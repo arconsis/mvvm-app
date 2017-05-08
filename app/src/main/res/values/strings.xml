@@ -1,0 +1,10 @@
+<resources>
+	<string name="app_name">MvvmNoteSample</string>
+	<string name="enter_password">Enter password…</string>
+	<string name="enter_username">Enter username…</string>
+	<string name="login">Login</string>
+	<string name="register">Register</string>
+	<string name="running">Running…</string>
+	<string name="logout">Logout</string>
+	<string name="create">Create</string>
+</resources>

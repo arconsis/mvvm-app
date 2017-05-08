@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<data>
+
+		<variable
+			name="vm"
+			type="com.arconsis.mvvmnotesample.login.LoginViewModel" />
+	</data>
+
+	<android.support.constraint.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<EditText
+			android:id="@+id/user_name"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="8dp"
+			android:layout_marginRight="8dp"
+			android:layout_marginTop="32dp"
+			android:ems="10"
+			android:hint="@string/enter_username"
+			android:inputType="textPersonName"
+			android:text="@={vm.username}"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<EditText
+			android:id="@+id/password"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="8dp"
+			android:layout_marginRight="8dp"
+			android:layout_marginTop="24dp"
+			android:ems="10"
+			android:hint="@string/enter_password"
+			android:inputType="textPassword"
+			android:text="@={vm.password}"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/user_name" />
+
+		<Button
+			android:id="@+id/login"
+			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="8dp"
+			android:layout_marginTop="24dp"
+			android:elevation="0dp"
+			android:onClick="@{()->vm.doLogin()}"
+			android:text="@string/login"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/password" />
+
+		<Button
+			android:id="@+id/register"
+			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="8dp"
+			android:layout_marginTop="24dp"
+			android:onClick="@{()->vm.doRegister()}"
+			android:text="@string/register"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/password" />
+	</android.support.constraint.ConstraintLayout>
+</layout>
