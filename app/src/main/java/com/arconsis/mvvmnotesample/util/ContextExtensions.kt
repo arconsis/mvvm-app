@@ -14,6 +14,12 @@ fun Context.toast(text: String, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, text, duration).show()
 }
 
+fun Fragment.toast(text: String, duration: Int = Toast.LENGTH_LONG) {
+    appContext().toast(text, duration)
+}
+
+fun Fragment.appContext(): Context = this.context.applicationContext
+
 class Herder<out T>(private val id: String? = null, private val block: () -> T) : ReadOnlyProperty<Fragment, T> {
 
     private var value: T? = null

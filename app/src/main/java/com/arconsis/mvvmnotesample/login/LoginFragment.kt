@@ -65,7 +65,7 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
 
     override fun onLoginFailed() {
         withProgress {
-            context.toast("Login failed")
+            toast("Login failed")
         }
     }
 
@@ -74,7 +74,7 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
     }
 
     override fun onDataMissing() {
-        context.toast("Please enter username and password")
+        toast("Please enter username and password")
     }
 
     private fun withProgress(block: () -> Unit) {

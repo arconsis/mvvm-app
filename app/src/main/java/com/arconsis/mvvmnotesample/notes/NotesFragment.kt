@@ -20,6 +20,7 @@ import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.login.LoginActivity
 import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.NetworkChecker
+import com.arconsis.mvvmnotesample.util.appContext
 import com.arconsis.mvvmnotesample.util.toast
 import org.droitateddb.EntityService
 
@@ -29,7 +30,7 @@ import org.droitateddb.EntityService
 class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     private val user by lazy <User> { arguments.getParcelable(ARG_USER) }
-    private val viewModel by Herder("notes") { NotesViewModel(user, NoteService(EntityService(context, NoteDb::class.java), NetworkChecker(context.applicationContext))) }
+    private val viewModel by Herder("notes") { NotesViewModel(user, NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()))) }
     private lateinit var adapter: NoteAdapter
     private var noteUpdatedReceiver: NotesUpdatedReceiver? = null
 
@@ -93,7 +94,7 @@ class NotesFragment : Fragment(), NotesViewModel.NotesActions {
     }
 
     override fun onFailure() {
-        context.toast("A failure occurred")
+        toast("A failure occurred")
     }
 
     private inner class NotesUpdatedReceiver : BroadcastReceiver() {

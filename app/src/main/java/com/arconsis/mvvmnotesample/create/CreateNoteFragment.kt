@@ -7,20 +7,17 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.databinding.CreateNoteFragmentBinding
+import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.notes.NoteService
-import com.arconsis.mvvmnotesample.util.Herder
-import com.arconsis.mvvmnotesample.util.NetworkChecker
-import com.arconsis.mvvmnotesample.util.ProgressDialogFragment
-import com.arconsis.mvvmnotesample.util.toast
+import com.arconsis.mvvmnotesample.util.*
 import org.droitateddb.EntityService
 
 class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
 
-    private val viewModel by Herder("createdNote") { CreateNoteViewModel(arguments.getParcelable(ARG_USER), NoteService(EntityService(context, NoteDb::class.java), NetworkChecker(context))) }
+    private val viewModel by Herder("createdNote") { CreateNoteViewModel(arguments.getParcelable(ARG_USER), NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()))) }
     private var callback: CreateNoteCallback? = null
 
     override fun onAttach(context: Context?) {
@@ -60,7 +57,7 @@ class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
 
     override fun onFailure() {
         withProgress {
-            context.toast("Note could not be created. Please try again")
+            toast("Note could not be created. Please try again")
         }
     }
 
@@ -69,7 +66,7 @@ class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
     }
 
     override fun onDataMissing() {
-        context.toast("Please enter a title and a message")
+        toast("Please enter a title and a message")
     }
 
     private fun withProgress(block: () -> Unit) {
