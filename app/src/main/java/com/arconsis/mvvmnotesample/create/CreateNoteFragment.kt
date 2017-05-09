@@ -44,12 +44,6 @@ class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
 
     override fun onStart() {
         super.onStart()
-
-        val note = viewModel.createdNote
-        if (note != null) {
-            callback?.onNoteCreated(note)
-        }
-
         viewModel.actions = this
     }
 

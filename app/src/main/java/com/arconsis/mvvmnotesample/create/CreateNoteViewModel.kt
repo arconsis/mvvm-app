@@ -16,6 +16,12 @@ class CreateNoteViewModel(private val user: User, private val noteService: NoteS
     var title = ""
     var message = ""
     var actions: CreateNoteActions? = null
+        set(value) {
+            if (createdNote != null) {
+                value?.onNoteCreated(createdNote!!)
+            }
+            field = value
+        }
     var createdNote: NoteDto? = null
     private val disposables = CompositeDisposable()
     private var processing = false

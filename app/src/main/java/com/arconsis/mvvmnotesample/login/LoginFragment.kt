@@ -3,7 +3,6 @@ package com.arconsis.mvvmnotesample.login
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,19 +22,17 @@ import com.arconsis.mvvmnotesample.util.toast
  */
 class LoginFragment : Fragment(), LoginViewModel.LoginActions {
 
-    private val loginViewModel by Herder(null) { LoginViewModel(LoginService()) }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (context.isLocalUserPresent()) {
-            activity.finish()
-            NotesActivity.start(activity, context.getLocalUser())
+    private val loginViewModel by Herder(null) {
+        val local: User? = if (context.isLocalUserPresent()) {
+            context.getLocalUser()
+        } else {
+            null
         }
+
+        LoginViewModel(local, LoginService())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.i("XXX", "Fragment id = " + activity.taskId)
-
         val binding = LoginFragmentBinding.inflate(inflater, container, false)
         binding.vm = loginViewModel
         return binding.root
@@ -46,10 +43,6 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
 
         if (!loginViewModel.processing) {
             withProgress {}
-        }
-
-        loginViewModel.savedUser?.let { user ->
-            onLoginSuccessful(user)
         }
 
         loginViewModel.loginActions = this

@@ -10,12 +10,21 @@ import org.androidobjectherder.HerdedObjectLifecycle
 /**
  * Created by Alexander on 04.05.2017.
  */
-class LoginViewModel(val loginService: LoginService) : HerdedObjectLifecycle {
+class LoginViewModel(private val localUser: User?, private val loginService: LoginService) : HerdedObjectLifecycle {
     var username = ""
     var password = ""
     var processing: Boolean = false
     var savedUser: User? = null
     var loginActions: LoginActions? = null
+        set(value) {
+            field = value
+            if (savedUser != null) {
+                value?.onLoginSuccessful(savedUser!!)
+                return
+            } else if (localUser != null) {
+                value?.onLoginSuccessful(localUser)
+            }
+        }
     val disposable = CompositeDisposable()
 
     fun doLogin() {
