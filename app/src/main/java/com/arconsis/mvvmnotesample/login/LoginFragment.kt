@@ -22,7 +22,7 @@ import com.arconsis.mvvmnotesample.util.toast
  */
 class LoginFragment : Fragment(), LoginViewModel.LoginActions {
 
-    private val loginViewModel by Herder(null) {
+    private val loginViewModel by Herder {
         val local: User? = if (context.isLocalUserPresent()) {
             context.getLocalUser()
         } else {
