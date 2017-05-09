@@ -20,7 +20,7 @@ class NoteAdapter(private var notes: MutableList<NoteDto> = mutableListOf()) : R
         holder.binding.note = notes[position]
     }
 
-    override fun getItemCount():Int{
+    override fun getItemCount(): Int {
         return notes.size
     }
 

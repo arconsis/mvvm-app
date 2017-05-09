@@ -17,11 +17,10 @@ class CreateNoteViewModel(private val user: User, private val noteService: NoteS
     var message = ""
     var actions: CreateNoteActions? = null
         set(value) {
-            if (createdNote != null) {
-                value?.onNoteCreated(createdNote!!)
-            }
             field = value
+            notifyNoteCreatedIfPresent()
         }
+
     var createdNote: NoteDto? = null
     private val disposables = CompositeDisposable()
     private var processing = false
@@ -69,6 +68,14 @@ class CreateNoteViewModel(private val user: User, private val noteService: NoteS
     }
 
     private fun isDataPresent(): Boolean = title.isNotEmpty() && message.isNotEmpty()
+
+    private fun notifyNoteCreatedIfPresent() {
+        val note = createdNote
+        if (note != null) {
+            actions?.onNoteCreated(note)
+        }
+    }
+
 
     interface CreateNoteActions {
         fun onNoteCreated(note: NoteDto)

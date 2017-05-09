@@ -18,26 +18,22 @@ class LoginViewModel(private val localUser: User?, private val loginService: Log
     var loginActions: LoginActions? = null
         set(value) {
             field = value
-            if (savedUser != null) {
-                value?.onLoginSuccessful(savedUser!!)
-                return
-            } else if (localUser != null) {
-                value?.onLoginSuccessful(localUser)
-            }
+            notifySuccessIfAUserIsPresent()
         }
+
     val disposable = CompositeDisposable()
 
     fun doLogin() {
         process {
             loginService.login(username, password)
-                    .subscribe(this::onSuccess, this::onError, {}, this::onSubscribe)
+                    .subscribe(this::onSuccess, this::onError)
         }
     }
 
     fun doRegister() {
         process {
             loginService.register(username, password)
-                    .subscribe(this::onSuccess, this::onError, {}, this::onSubscribe)
+                    .subscribe(this::onSuccess, this::onError)
         }
     }
 
@@ -57,25 +53,30 @@ class LoginViewModel(private val localUser: User?, private val loginService: Log
         loginActions?.onLoginFailed()
     }
 
-    private fun onSubscribe(d: Disposable) {
-        disposable.add(d)
-    }
-
     override fun unherderd() {
         disposable.dispose()
     }
 
-    private fun process(block: () -> Unit) {
+    private fun process(block: () -> Disposable) {
         if (isDataPresent()) {
             processing = true
             loginActions?.processing()
-            block()
+            disposable.add(block())
         } else {
             loginActions?.onDataMissing()
         }
     }
 
     private fun isDataPresent(): Boolean = username.isNotEmpty() && password.isNotEmpty()
+
+    private fun notifySuccessIfAUserIsPresent() {
+        val saved = savedUser
+        if (saved != null) {
+            loginActions?.onLoginSuccessful(saved)
+        } else if (localUser != null) {
+            loginActions?.onLoginSuccessful(localUser)
+        }
+    }
 
     interface LoginActions {
         fun onLoginSuccessful(user: User)
