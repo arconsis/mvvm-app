@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.arconsis.mvvmnotesample.data.NoteDb
+import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.databinding.CreateNoteFragmentBinding

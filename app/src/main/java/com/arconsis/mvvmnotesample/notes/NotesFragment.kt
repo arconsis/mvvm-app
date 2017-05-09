@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import com.arconsis.mvvmnotesample.R
 import com.arconsis.mvvmnotesample.create.CreateNoteActivity
-import com.arconsis.mvvmnotesample.data.NoteDb
+import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.data.removeLocalUser

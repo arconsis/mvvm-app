@@ -1,6 +1,7 @@
 package com.arconsis.mvvmnotesample.notes
 
 import com.arconsis.mvvmnotesample.data.*
+import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.retrofit
 import io.reactivex.Observable
