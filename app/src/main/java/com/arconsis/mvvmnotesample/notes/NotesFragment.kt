@@ -1,18 +1,22 @@
 package com.arconsis.mvvmnotesample.notes
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import com.arconsis.mvvmnotesample.R
 import com.arconsis.mvvmnotesample.create.CreateNoteActivity
-import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.data.removeLocalUser
 import com.arconsis.mvvmnotesample.databinding.NotesFragmentBinding
+import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.login.LoginActivity
 import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.NetworkChecker
@@ -27,6 +31,7 @@ class NotesFragment : Fragment(), NotesViewModel.NotesActions {
     private val user by lazy <User> { arguments.getParcelable(ARG_USER) }
     private val viewModel by Herder("notes") { NotesViewModel(user, NoteService(EntityService(context, NoteDb::class.java), NetworkChecker(context.applicationContext))) }
     private lateinit var adapter: NoteAdapter
+    private var noteUpdatedReceiver: NotesUpdatedReceiver? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -45,6 +50,7 @@ class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.logout) {
+            NotesBackgroundSync.unschedule(context)
             viewModel.logout()
             context.removeLocalUser()
             activity.finish()
@@ -58,9 +64,13 @@ class NotesFragment : Fragment(), NotesViewModel.NotesActions {
         super.onStart()
         viewModel.actions = this
         viewModel.loadNotesForCurrentUser()
+        noteUpdatedReceiver = NotesUpdatedReceiver()
+        LocalBroadcastManager.getInstance(context).registerReceiver(noteUpdatedReceiver, IntentFilter(NotesBackgroundSync.BROADCASTS_NOTES_UPDATED))
     }
 
     override fun onStop() {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(noteUpdatedReceiver)
+        noteUpdatedReceiver = null
         viewModel.actions = null
         super.onStop()
     }
@@ -84,6 +94,12 @@ class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     override fun onFailure() {
         context.toast("A failure occurred")
+    }
+
+    private inner class NotesUpdatedReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.readLocalNotes()
+        }
     }
 
     companion object {

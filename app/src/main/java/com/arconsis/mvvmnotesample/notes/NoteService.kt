@@ -1,6 +1,9 @@
 package com.arconsis.mvvmnotesample.notes
 
-import com.arconsis.mvvmnotesample.data.*
+import com.arconsis.mvvmnotesample.data.NoteDto
+import com.arconsis.mvvmnotesample.data.NotesResponse
+import com.arconsis.mvvmnotesample.data.Result
+import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.retrofit
@@ -37,6 +40,13 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>, private 
         }
     }
 
+    fun readNotesFromLocalDatabase(): List<NoteDto> {
+        val db = noteEntityService.get()
+        return db.map { (id, title, message, userId) ->
+            NoteDto(id ?: -1, title, message, userId)
+        }
+    }
+
     fun clearNotes() {
         noteEntityService.get().forEach { note -> noteEntityService.delete(note) }
 
@@ -47,13 +57,6 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>, private 
             updateLocalDatabase(r.body().notes)
         } else {
             readNotesFromLocalDatabase()
-        }
-    }
-
-    private fun readNotesFromLocalDatabase(): List<NoteDto> {
-        val db = noteEntityService.get()
-        return db.map { (id, title, message, userId) ->
-            NoteDto(id ?: -1, title, message, userId)
         }
     }
 

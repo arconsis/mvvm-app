@@ -27,6 +27,12 @@ class NotesViewModel(private val user: User, val noteService: NoteService) : Her
         noteService.clearNotes()
     }
 
+
+    fun readLocalNotes() {
+        val localNotes = noteService.readNotesFromLocalDatabase()
+        actions?.onNotesAvailable(localNotes)
+    }
+
     override fun unherderd() {
         disposable.dispose()
     }
