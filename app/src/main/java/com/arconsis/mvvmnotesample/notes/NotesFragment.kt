@@ -22,6 +22,7 @@ import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.appContext
 import com.arconsis.mvvmnotesample.util.toast
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.droitateddb.EntityService
 
 /**
@@ -30,7 +31,10 @@ import org.droitateddb.EntityService
 class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     private val user by lazy <User> { arguments.getParcelable(ARG_USER) }
-    private val viewModel by Herder("notes") { NotesViewModel(user, NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()))) }
+    private val viewModel by Herder("notes") {
+        val noteService = NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()), AndroidSchedulers.mainThread())
+        NotesViewModel(user, noteService)
+    }
     private lateinit var adapter: NoteAdapter
     private var noteUpdatedReceiver: NotesUpdatedReceiver? = null
 

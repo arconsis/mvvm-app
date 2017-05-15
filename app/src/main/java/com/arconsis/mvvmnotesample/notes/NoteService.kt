@@ -8,12 +8,13 @@ import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.retrofit
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.droitateddb.EntityService
 import retrofit2.Response
 
-class NoteService(private val noteEntityService: EntityService<NoteDb>, private val networkChecker: NetworkChecker) {
+class NoteService(private val noteEntityService: EntityService<NoteDb>, private val networkChecker: NetworkChecker, private val observingScheduler: Scheduler) {
 
     private val noteApi = retrofit().create(NoteApi::class.java)
 
@@ -21,11 +22,11 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>, private 
         if (networkChecker.isNetworkAvailable()) {
             return Observable.fromCallable { noteApi.getNotesByUserId(user.id).execute() }
                     .subscribeOn(Schedulers.io()).map(this::handleNotesResponse)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(observingScheduler)
         } else {
             return Observable.fromCallable { readNotesFromLocalDatabase() }
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(observingScheduler)
         }
     }
 
@@ -34,7 +35,7 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>, private 
             return Observable.fromCallable { noteApi.createNote(title, message, user.id).execute() }
                     .subscribeOn(Schedulers.io())
                     .map(this::handleCreateResponse)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(observingScheduler)
         } else {
             return Observable.just(Result.failure())
         }

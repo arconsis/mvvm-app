@@ -13,11 +13,15 @@ import com.arconsis.mvvmnotesample.databinding.CreateNoteFragmentBinding
 import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.notes.NoteService
 import com.arconsis.mvvmnotesample.util.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.droitateddb.EntityService
 
 class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
 
-    private val viewModel by Herder("createdNote") { CreateNoteViewModel(arguments.getParcelable(ARG_USER), NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()))) }
+    private val viewModel by Herder("createdNote") {
+        val noteService = NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()), AndroidSchedulers.mainThread())
+        CreateNoteViewModel(arguments.getParcelable(ARG_USER), noteService)
+    }
     private var callback: CreateNoteCallback? = null
 
     override fun onAttach(context: Context?) {

@@ -17,6 +17,7 @@ import com.arconsis.mvvmnotesample.notes.NotesBackgroundSync
 import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.ProgressDialogFragment
 import com.arconsis.mvvmnotesample.util.toast
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 /**
  * Created by Alexander on 04.05.2017.
@@ -30,7 +31,7 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
             null
         }
 
-        LoginViewModel(local, LoginService())
+        LoginViewModel(local, LoginService(AndroidSchedulers.mainThread()))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

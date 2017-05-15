@@ -9,6 +9,7 @@ import com.arconsis.mvvmnotesample.data.isLocalUserPresent
 import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.google.android.gms.gcm.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.droitateddb.EntityService
 import java.lang.Exception
 
@@ -18,7 +19,7 @@ import java.lang.Exception
 class NotesBackgroundSync : GcmTaskService() {
 
     private val notesService by lazy {
-        NoteService(EntityService<NoteDb>(applicationContext, NoteDb::class.java), NetworkChecker(applicationContext))
+        NoteService(EntityService<NoteDb>(applicationContext, NoteDb::class.java), NetworkChecker(applicationContext), AndroidSchedulers.mainThread())
     }
 
     override fun onInitializeTasks() {
