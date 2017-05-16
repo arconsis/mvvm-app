@@ -12,20 +12,20 @@ import retrofit2.Response
 /**
  * Created by Alexander on 04.05.2017.
  */
-class LoginService(private val observingScheduler: Scheduler) {
+open class LoginService(private val observingScheduler: Scheduler,
+                        private val subscriberScheduler: Scheduler = Schedulers.io(),
+                        private val loginApi: LoginApi = retrofit().create(LoginApi::class.java)) {
 
-    val loginApi: LoginApi = retrofit().create(LoginApi::class.java)
-
-    fun login(username: String, password: String): Single<Result<User>> {
+    open fun login(username: String, password: String): Single<Result<User>> {
         return Single.fromCallable { loginApi.login(username, password).execute() }
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(subscriberScheduler)
                 .map { r -> mapUserIdToUserResult(r, username, password) { code -> code == 200 } }
                 .observeOn(observingScheduler)
     }
 
-    fun register(username: String, password: String): Single<Result<User>> {
+    open fun register(username: String, password: String): Single<Result<User>> {
         return Single.fromCallable { loginApi.register(username, password).execute() }
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(subscriberScheduler)
                 .map { r -> mapUserIdToUserResult(r, username, password) { code -> code == 201 } }
                 .observeOn(observingScheduler)
     }

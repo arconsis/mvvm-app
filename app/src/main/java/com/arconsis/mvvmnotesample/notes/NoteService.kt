@@ -9,19 +9,21 @@ import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.retrofit
 import io.reactivex.Observable
 import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.droitateddb.EntityService
 import retrofit2.Response
 
-class NoteService(private val noteEntityService: EntityService<NoteDb>, private val networkChecker: NetworkChecker, private val observingScheduler: Scheduler) {
-
-    private val noteApi = retrofit().create(NoteApi::class.java)
+class NoteService(private val noteEntityService: EntityService<NoteDb>,
+                  private val networkChecker: NetworkChecker,
+                  private val observingScheduler: Scheduler,
+                  private val subscribeScheduler: Scheduler = Schedulers.io(),
+                  private val noteApi: NoteApi = retrofit().create(NoteApi::class.java)) {
 
     fun getNotesForUser(user: User): Observable<List<NoteDto>> {
         if (networkChecker.isNetworkAvailable()) {
             return Observable.fromCallable { noteApi.getNotesByUserId(user.id).execute() }
-                    .subscribeOn(Schedulers.io()).map(this::handleNotesResponse)
+                    .subscribeOn(subscribeScheduler)
+                    .map(this::handleNotesResponse)
                     .observeOn(observingScheduler)
         } else {
             return Observable.fromCallable { readNotesFromLocalDatabase() }
@@ -33,7 +35,7 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>, private 
     fun createNote(title: String, message: String, user: User): Observable<Result<NoteDto>> {
         if (networkChecker.isNetworkAvailable()) {
             return Observable.fromCallable { noteApi.createNote(title, message, user.id).execute() }
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(subscribeScheduler)
                     .map(this::handleCreateResponse)
                     .observeOn(observingScheduler)
         } else {
