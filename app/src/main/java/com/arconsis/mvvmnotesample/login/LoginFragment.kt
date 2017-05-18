@@ -1,5 +1,8 @@
 package com.arconsis.mvvmnotesample.login
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelStores
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
@@ -14,7 +17,6 @@ import com.arconsis.mvvmnotesample.data.saveLocalUser
 import com.arconsis.mvvmnotesample.databinding.LoginFragmentBinding
 import com.arconsis.mvvmnotesample.notes.NotesActivity
 import com.arconsis.mvvmnotesample.notes.NotesBackgroundSync
-import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.ProgressDialogFragment
 import com.arconsis.mvvmnotesample.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,17 +26,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
  */
 class LoginFragment : Fragment(), LoginViewModel.LoginActions {
 
-    private val loginViewModel by Herder {
-        val local: User? = if (context.isLocalUserPresent()) {
-            context.getLocalUser()
-        } else {
-            null
-        }
-
-        LoginViewModel(local, LoginService(AndroidSchedulers.mainThread()))
-    }
+    private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        loginViewModel = ViewModelProvider(ViewModelStores.of(this), LoginViewModelFactory()).get(LoginViewModel::class.java)
+
         val binding = LoginFragmentBinding.inflate(inflater, container, false)
         binding.vm = loginViewModel
         return binding.root
@@ -84,6 +80,18 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
             fragment.dismiss()
         }
         block()
+    }
+
+    private inner class LoginViewModelFactory : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            val local: User? = if (context.isLocalUserPresent()) {
+                context.getLocalUser()
+            } else {
+                null
+            }
+            @Suppress("UNCHECKED_CAST")
+            return LoginViewModel(local, LoginService(AndroidSchedulers.mainThread())) as T
+        }
     }
 
     companion object {
