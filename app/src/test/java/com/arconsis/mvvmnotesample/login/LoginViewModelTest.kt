@@ -2,6 +2,7 @@ package com.arconsis.mvvmnotesample.login
 
 import com.arconsis.mvvmnotesample.data.Result
 import com.arconsis.mvvmnotesample.data.User
+import com.arconsis.mvvmnotesample.sync.NotesSyncRepository
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
@@ -18,10 +19,11 @@ class LoginViewModelTest {
     @Test
     fun successfulLogin() {
         val loginService = mock<LoginService>()
+        val notesSyncRepository = mock<NotesSyncRepository>()
         whenever(loginService.login(Mockito.anyString(), Mockito.anyString())).thenReturn(Single.just(Result.success(User(0, "a", "a"))))
         val actions = mock<LoginViewModel.LoginActions>()
 
-        val vm = LoginViewModel(null, loginService)
+        val vm = LoginViewModel(null, loginService, notesSyncRepository)
         vm.loginActions = actions
 
         vm.username = "a"
@@ -37,10 +39,11 @@ class LoginViewModelTest {
     @Test
     fun failedLogin() {
         val loginService = mock<LoginService>()
+        val notesSyncRepository = mock<NotesSyncRepository>()
         whenever(loginService.login(Mockito.anyString(), Mockito.anyString())).thenReturn(Single.just(Result.failure()))
         val actions = mock<LoginViewModel.LoginActions>()
 
-        val vm = LoginViewModel(null, loginService)
+        val vm = LoginViewModel(null, loginService, notesSyncRepository)
         vm.loginActions = actions
 
         vm.username = "a"
@@ -56,8 +59,9 @@ class LoginViewModelTest {
     @Test
     fun notifyActionsOnSetWhenUserIsPresent() {
         val loginService = mock<LoginService>()
+        val notesSyncRepository = mock<NotesSyncRepository>()
         val actions = mock<LoginViewModel.LoginActions>()
-        val vm = LoginViewModel(User(0, "a", "a"), loginService)
+        val vm = LoginViewModel(User(0, "a", "a"), loginService, notesSyncRepository)
         vm.loginActions = actions
 
         verify(actions, Mockito.times(1)).onLoginSuccessful(any())
@@ -66,10 +70,11 @@ class LoginViewModelTest {
     @Test
     fun notifyOnDataMissing() {
         val loginService = mock<LoginService>()
+        val notesSyncRepository = mock<NotesSyncRepository>()
         whenever(loginService.login(Mockito.anyString(), Mockito.anyString())).thenReturn(Single.just(Result.failure()))
         val actions = mock<LoginViewModel.LoginActions>()
 
-        val vm = LoginViewModel(null, loginService)
+        val vm = LoginViewModel(null, loginService, notesSyncRepository)
         vm.loginActions = actions
 
         vm.doLogin()
