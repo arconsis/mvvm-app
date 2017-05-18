@@ -13,7 +13,7 @@ import com.arconsis.mvvmnotesample.data.isLocalUserPresent
 import com.arconsis.mvvmnotesample.data.saveLocalUser
 import com.arconsis.mvvmnotesample.databinding.LoginFragmentBinding
 import com.arconsis.mvvmnotesample.notes.NotesActivity
-import com.arconsis.mvvmnotesample.notes.NotesBackgroundSync
+import com.arconsis.mvvmnotesample.sync.NotesBackgroundSync
 import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.ProgressDialogFragment
 import com.arconsis.mvvmnotesample.util.toast

@@ -1,4 +1,4 @@
-package com.arconsis.mvvmnotesample.notes
+package com.arconsis.mvvmnotesample.sync
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.util.Log
 import com.arconsis.mvvmnotesample.data.getLocalUser
 import com.arconsis.mvvmnotesample.data.isLocalUserPresent
 import com.arconsis.mvvmnotesample.db.NoteDb
+import com.arconsis.mvvmnotesample.notes.NoteService
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.google.android.gms.gcm.*
 import io.reactivex.android.schedulers.AndroidSchedulers

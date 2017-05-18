@@ -18,6 +18,7 @@ import com.arconsis.mvvmnotesample.data.removeLocalUser
 import com.arconsis.mvvmnotesample.databinding.NotesFragmentBinding
 import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.login.LoginActivity
+import com.arconsis.mvvmnotesample.sync.NotesBackgroundSync
 import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.appContext
