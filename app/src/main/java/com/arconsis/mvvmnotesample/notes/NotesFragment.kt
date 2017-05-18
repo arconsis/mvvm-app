@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import com.arconsis.mvvmnotesample.MvvmNoteApplication
@@ -29,8 +28,8 @@ import org.droitateddb.EntityService
 class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     private val user by lazy <User> { arguments.getParcelable(ARG_USER) }
-    private val notesSyncRepository = (activity.application as MvvmNoteApplication).notesBackgroundSync
     private val viewModel by Herder("notes") {
+        val notesSyncRepository = (appContext() as MvvmNoteApplication).notesBackgroundSync
         val noteService = NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()), AndroidSchedulers.mainThread())
         NotesViewModel(user, noteService, notesSyncRepository)
     }
