@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.arconsis.mvvmnotesample.MvvmNoteApplication
 import com.arconsis.mvvmnotesample.R
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.data.getLocalUser
@@ -31,7 +32,8 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
             null
         }
 
-        LoginViewModel(local, LoginService(AndroidSchedulers.mainThread()))
+        val notesSyncRepository = (activity.application as MvvmNoteApplication).notesBackgroundSync
+        LoginViewModel(local, LoginService(AndroidSchedulers.mainThread()), notesSyncRepository)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,7 +59,6 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
 
     override fun onLoginSuccessful(user: User) {
         withProgress {
-            NotesBackgroundSync.schedule(context)
             context.saveLocalUser(user)
             activity.finish()
             NotesActivity.start(activity, user)

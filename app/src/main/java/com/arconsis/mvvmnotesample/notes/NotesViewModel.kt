@@ -3,6 +3,7 @@ package com.arconsis.mvvmnotesample.notes
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
+import com.arconsis.mvvmnotesample.sync.NotesSyncRepository
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import org.androidobjectherder.HerdedObjectLifecycle
@@ -10,9 +11,18 @@ import org.androidobjectherder.HerdedObjectLifecycle
 /**
  * Created by Alexander on 05.05.2017.
  */
-class NotesViewModel(private val user: User, val noteService: NoteService) : HerdedObjectLifecycle {
+class NotesViewModel(private val user: User, val noteService: NoteService, private val notesSyncRepository: NotesSyncRepository) : HerdedObjectLifecycle {
     val disposable = CompositeDisposable()
+
     var actions: NotesActions? = null
+        set(value) {
+            field = value
+            if(value != null){
+                notesSyncRepository.notify(this::readLocalNotes)
+            }else{
+                notesSyncRepository.notify(null)
+            }
+        }
 
     fun loadNotesForCurrentUser() {
         noteService.getNotesForUser(user)
@@ -24,6 +34,7 @@ class NotesViewModel(private val user: User, val noteService: NoteService) : Her
     }
 
     fun logout() {
+        notesSyncRepository.unschedule()
         noteService.clearNotes()
     }
 

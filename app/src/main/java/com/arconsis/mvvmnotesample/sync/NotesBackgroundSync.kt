@@ -1,7 +1,9 @@
 package com.arconsis.mvvmnotesample.sync
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.getLocalUser
@@ -17,7 +19,20 @@ import java.lang.Exception
 /**
  * Created by Alexander on 09.05.2017.
  */
-class NotesBackgroundSync : GcmTaskService() {
+class NotesBackgroundSync(val context: Context) : GcmTaskService(), NotesSyncRepository {
+
+    private var noteUpdatedReceiver: NotesUpdatedReceiver? = NotesUpdatedReceiver(this::notesUpdated)
+    private var notificationHandler: (() -> Unit)? = null
+    val BROADCASTS_NOTES_UPDATED = "notes_updated"
+
+    init {
+        LocalBroadcastManager.getInstance(context).registerReceiver(noteUpdatedReceiver, IntentFilter(BROADCASTS_NOTES_UPDATED))
+    }
+
+
+    private val INTERVAL_IN_S = 24 * 60 * 60.toLong()
+    private val LOG_TAG = NotesBackgroundSync::class.java.simpleName
+    private val SERVICE_TAG = NotesBackgroundSync::class.java.canonicalName
 
     private val notesService by lazy {
         NoteService(EntityService<NoteDb>(applicationContext, NoteDb::class.java), NetworkChecker(applicationContext), AndroidSchedulers.mainThread())
@@ -25,7 +40,7 @@ class NotesBackgroundSync : GcmTaskService() {
 
     override fun onInitializeTasks() {
         super.onInitializeTasks()
-        schedule(this)
+        schedule()
     }
 
     override fun onRunTask(param: TaskParams?): Int {
@@ -44,28 +59,39 @@ class NotesBackgroundSync : GcmTaskService() {
         }
     }
 
-    companion object {
-        val BROADCASTS_NOTES_UPDATED = "notes_updated"
+    override fun schedule() {
+        val task = PeriodicTask.Builder()
+                .setPeriod(INTERVAL_IN_S)
+                .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                .setPersisted(true)
+                .setService(NotesBackgroundSync::class.java)
+                .setTag(SERVICE_TAG)
+                .setUpdateCurrent(true)
+                .build()
 
-        private val INTERVAL_IN_S = 24 * 60 * 60.toLong()
-        private val LOG_TAG = NotesBackgroundSync::class.java.simpleName
-        private val SERVICE_TAG = NotesBackgroundSync::class.java.canonicalName
+        GcmNetworkManager.getInstance(context).schedule(task)
+    }
 
-        fun schedule(context: Context) {
-            val task = PeriodicTask.Builder()
-                    .setPeriod(INTERVAL_IN_S)
-                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-                    .setPersisted(true)
-                    .setService(NotesBackgroundSync::class.java)
-                    .setTag(SERVICE_TAG)
-                    .setUpdateCurrent(true)
-                    .build()
+    override fun unschedule() {
+        GcmNetworkManager.getInstance(context).cancelTask(SERVICE_TAG, NotesBackgroundSync::class.java)
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(noteUpdatedReceiver)
+        noteUpdatedReceiver?.update = null
+        noteUpdatedReceiver = null
+    }
 
-            GcmNetworkManager.getInstance(context).schedule(task)
-        }
+    fun notesUpdated(){
+        notificationHandler?.invoke()
+    }
 
-        fun unschedule(context: Context) {
-            GcmNetworkManager.getInstance(context).cancelTask(SERVICE_TAG, NotesBackgroundSync::class.java)
+    override fun notify(notificationHandler: (() -> Unit)?) {
+        // TODO: when null is passed could unregister receiver too
+        this.notificationHandler = notificationHandler
+    }
+
+    private class NotesUpdatedReceiver(var update: (() -> Unit)?) : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            update?.invoke()
         }
     }
 }
