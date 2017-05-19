@@ -4,13 +4,14 @@ import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.Result
 import com.arconsis.mvvmnotesample.data.User
+import com.arconsis.mvvmnotesample.notes.sync.NotesSyncRepository
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 /**
  * Created by Alexander on 04.05.2017.
  */
-class LoginViewModel(private val localUser: User?, private val loginService: LoginService) : ViewModel() {
+class LoginViewModel(private val localUser: User?, private val loginService: LoginService, private val notesSyncRepository: NotesSyncRepository) : ViewModel() {
     var username = ""
     var password = ""
     var processing: Boolean = false
@@ -42,6 +43,7 @@ class LoginViewModel(private val localUser: User?, private val loginService: Log
         if (result.success && result.value != null) {
             savedUser = result.value
             loginActions?.onLoginSuccessful(result.value)
+            notesSyncRepository.schedule()
         } else {
             loginActions?.onLoginFailed()
         }

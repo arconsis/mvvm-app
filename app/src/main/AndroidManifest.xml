@@ -20,11 +20,11 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".notes.NotesActivity" />
-		<activity android:name=".create.CreateNoteActivity" />
+		<activity android:name=".notes.overview.NotesActivity" />
+		<activity android:name="com.arconsis.mvvmnotesample.notes.create.CreateNoteActivity" />
 
 		<service
-			android:name=".notes.NotesBackgroundSync"
+			android:name="com.arconsis.mvvmnotesample.notes.sync.NotesGcmTaskService"
 			android:exported="true"
 			android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
 			<intent-filter>

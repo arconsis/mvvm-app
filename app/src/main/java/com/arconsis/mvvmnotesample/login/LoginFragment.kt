@@ -15,9 +15,10 @@ import com.arconsis.mvvmnotesample.data.getLocalUser
 import com.arconsis.mvvmnotesample.data.isLocalUserPresent
 import com.arconsis.mvvmnotesample.data.saveLocalUser
 import com.arconsis.mvvmnotesample.databinding.LoginFragmentBinding
-import com.arconsis.mvvmnotesample.notes.NotesActivity
-import com.arconsis.mvvmnotesample.notes.NotesBackgroundSync
+import com.arconsis.mvvmnotesample.notes.overview.NotesActivity
+import com.arconsis.mvvmnotesample.notes.sync.NotesSyncService
 import com.arconsis.mvvmnotesample.util.ProgressDialogFragment
+import com.arconsis.mvvmnotesample.util.appContext
 import com.arconsis.mvvmnotesample.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 
@@ -53,7 +54,6 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
 
     override fun onLoginSuccessful(user: User) {
         withProgress {
-            NotesBackgroundSync.schedule(context)
             context.saveLocalUser(user)
             activity.finish()
             NotesActivity.start(activity, user)
@@ -90,7 +90,7 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
                 null
             }
             @Suppress("UNCHECKED_CAST")
-            return LoginViewModel(local, LoginService(AndroidSchedulers.mainThread())) as T
+            return LoginViewModel(local, LoginService(AndroidSchedulers.mainThread()), NotesSyncService(appContext())) as T
         }
     }
 

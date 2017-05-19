@@ -6,11 +6,11 @@ import com.arconsis.mvvmnotesample.data.UserResponse
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.ResponseBody
 import org.junit.Test
-import retrofit2.Call
 import retrofit2.Response
 
 
@@ -20,11 +20,8 @@ import retrofit2.Response
 class LoginServiceTest {
     @Test
     fun successfulLogin() {
-        val call = mock<Call<UserResponse>>()
-        whenever(call.execute()).thenReturn(Response.success(UserResponse(200, 0)))
-
         val loginApi = mock<LoginApi>()
-        whenever(loginApi.login(any(), any())).thenReturn(call)
+        whenever(loginApi.login(any(), any())).thenReturn(Single.just(Response.success(UserResponse(200, 0))))
 
 
         val loginService = LoginService(Schedulers.trampoline(), Schedulers.trampoline(), loginApi)
@@ -33,11 +30,8 @@ class LoginServiceTest {
 
     @Test
     fun failedLogin() {
-        val call = mock<Call<UserResponse>>()
-        whenever(call.execute()).thenReturn(Response.error(500, ResponseBody.create(MediaType.parse("application/json"), "failure")))
-
         val loginApi = mock<LoginApi>()
-        whenever(loginApi.login(any(), any())).thenReturn(call)
+        whenever(loginApi.login(any(), any())).thenReturn(Single.just(Response.error(500, ResponseBody.create(MediaType.parse("application/json"), "failure"))))
 
         val loginService = LoginService(Schedulers.trampoline(), Schedulers.trampoline(), loginApi)
         loginService.login("a", "a").test().assertResult(Result.failure())

@@ -6,7 +6,7 @@
 
 		<variable
 			name="vm"
-			type="com.arconsis.mvvmnotesample.create.CreateNoteViewModel" />
+			type="com.arconsis.mvvmnotesample.notes.create.CreateNoteViewModel" />
 	</data>
 
 	<android.support.constraint.ConstraintLayout
