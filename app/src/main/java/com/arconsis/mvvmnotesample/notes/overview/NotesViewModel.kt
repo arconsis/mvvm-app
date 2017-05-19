@@ -1,20 +1,12 @@
-package com.arconsis.mvvmnotesample.notes
-
-import android.util.Log
-import com.arconsis.mvvmnotesample.data.NoteDto
-import com.arconsis.mvvmnotesample.data.User
-import com.arconsis.mvvmnotesample.sync.NotesSyncRepository
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import org.androidobjectherder.HerdedObjectLifecycle
+package com.arconsis.mvvmnotesample.notes.overview
 
 /**
  * Created by Alexander on 05.05.2017.
  */
-class NotesViewModel(private val user: User, val noteService: NoteService, private val notesSyncRepository: NotesSyncRepository) : HerdedObjectLifecycle {
-    val disposable = CompositeDisposable()
+class NotesViewModel(private val user: com.arconsis.mvvmnotesample.data.User, val noteService: com.arconsis.mvvmnotesample.notes.NoteService, private val notesSyncRepository: com.arconsis.mvvmnotesample.notes.sync.NotesSyncRepository) : org.androidobjectherder.HerdedObjectLifecycle {
+    val disposable = io.reactivex.disposables.CompositeDisposable()
 
-    var actions: NotesActions? = null
+    var actions: com.arconsis.mvvmnotesample.notes.overview.NotesViewModel.NotesActions? = null
         set(value) {
             field = value
             if(value != null){
@@ -48,26 +40,26 @@ class NotesViewModel(private val user: User, val noteService: NoteService, priva
         disposable.dispose()
     }
 
-    private fun onSubscribe(d: Disposable) {
+    private fun onSubscribe(d: io.reactivex.disposables.Disposable) {
         disposable.add(d)
     }
 
     private fun onError(t: Throwable) {
-        Log.e(TAG, "Error", t)
+        android.util.Log.e(com.arconsis.mvvmnotesample.notes.overview.NotesViewModel.Companion.TAG, "Error", t)
     }
 
-    private fun onNotesAvailable(notes: List<NoteDto>) {
+    private fun onNotesAvailable(notes: List<com.arconsis.mvvmnotesample.data.NoteDto>) {
         actions?.onNotesAvailable(notes)
     }
 
     interface NotesActions {
-        fun onNotesAvailable(notes: List<NoteDto>)
+        fun onNotesAvailable(notes: List<com.arconsis.mvvmnotesample.data.NoteDto>)
         fun onCreateNewNote()
         fun onFailure()
     }
 
     companion object {
-        private val TAG = NotesViewModel::class.java.simpleName
+        private val TAG = com.arconsis.mvvmnotesample.notes.overview.NotesViewModel::class.java.simpleName
     }
 }
 

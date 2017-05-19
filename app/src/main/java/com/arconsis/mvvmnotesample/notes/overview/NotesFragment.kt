@@ -1,4 +1,4 @@
-package com.arconsis.mvvmnotesample.notes
+package com.arconsis.mvvmnotesample.notes.overview
 
 import android.app.Activity
 import android.content.Intent
@@ -8,13 +8,14 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import com.arconsis.mvvmnotesample.MvvmNoteApplication
 import com.arconsis.mvvmnotesample.R
-import com.arconsis.mvvmnotesample.create.CreateNoteActivity
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.data.removeLocalUser
 import com.arconsis.mvvmnotesample.databinding.NotesFragmentBinding
 import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.login.LoginActivity
+import com.arconsis.mvvmnotesample.notes.NoteService
+import com.arconsis.mvvmnotesample.notes.create.CreateNoteActivity
 import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.appContext

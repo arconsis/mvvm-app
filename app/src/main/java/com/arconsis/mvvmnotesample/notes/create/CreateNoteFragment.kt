@@ -1,4 +1,4 @@
-package com.arconsis.mvvmnotesample.create
+package com.arconsis.mvvmnotesample.notes.create
 
 import android.content.Context
 import android.os.Bundle

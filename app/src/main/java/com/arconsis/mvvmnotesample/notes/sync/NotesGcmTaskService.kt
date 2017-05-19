@@ -1,4 +1,4 @@
-package com.arconsis.mvvmnotesample.sync
+package com.arconsis.mvvmnotesample.notes.sync
 
 import android.content.Context
 import android.content.Intent

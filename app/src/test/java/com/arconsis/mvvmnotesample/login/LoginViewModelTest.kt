@@ -2,7 +2,7 @@ package com.arconsis.mvvmnotesample.login
 
 import com.arconsis.mvvmnotesample.data.Result
 import com.arconsis.mvvmnotesample.data.User
-import com.arconsis.mvvmnotesample.sync.NotesSyncRepository
+import com.arconsis.mvvmnotesample.notes.sync.NotesSyncRepository
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify

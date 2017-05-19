@@ -5,7 +5,7 @@
 
 		<variable
 			name="vm"
-			type="com.arconsis.mvvmnotesample.notes.NotesViewModel" />
+			type="com.arconsis.mvvmnotesample.notes.overview.NotesViewModel" />
 	</data>
 
 	<FrameLayout

@@ -1,8 +1,8 @@
 package com.arconsis.mvvmnotesample
 
 import android.app.Application
-import com.arconsis.mvvmnotesample.sync.NotesSyncService
-import com.arconsis.mvvmnotesample.sync.NotesSyncRepository
+import com.arconsis.mvvmnotesample.notes.sync.NotesSyncService
+import com.arconsis.mvvmnotesample.notes.sync.NotesSyncRepository
 import org.androidobjectherder.ObjectHerder
 
 /**

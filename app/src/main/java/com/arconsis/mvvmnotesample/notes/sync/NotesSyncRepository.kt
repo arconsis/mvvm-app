@@ -1,4 +1,4 @@
-package com.arconsis.mvvmnotesample.sync
+package com.arconsis.mvvmnotesample.notes.sync
 
 /**
  * Created by akoufatzis on 18.05.17.

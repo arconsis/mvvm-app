@@ -3,7 +3,7 @@ package com.arconsis.mvvmnotesample.login
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.Result
 import com.arconsis.mvvmnotesample.data.User
-import com.arconsis.mvvmnotesample.sync.NotesSyncRepository
+import com.arconsis.mvvmnotesample.notes.sync.NotesSyncRepository
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import org.androidobjectherder.HerdedObjectLifecycle
