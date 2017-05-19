@@ -1,7 +1,7 @@
 package com.arconsis.mvvmnotesample
 
 import android.app.Application
-import com.arconsis.mvvmnotesample.sync.NotesBackgroundSync
+import com.arconsis.mvvmnotesample.sync.NotesSyncService
 import com.arconsis.mvvmnotesample.sync.NotesSyncRepository
 import org.androidobjectherder.ObjectHerder
 
@@ -10,8 +10,8 @@ import org.androidobjectherder.ObjectHerder
  */
 class MvvmNoteApplication : Application() {
 
-    val notesBackgroundSync: NotesSyncRepository by lazy {
-        NotesBackgroundSync(applicationContext)
+    val notesSyncService: NotesSyncRepository by lazy {
+        NotesSyncService(applicationContext)
     }
 
     override fun onCreate() {

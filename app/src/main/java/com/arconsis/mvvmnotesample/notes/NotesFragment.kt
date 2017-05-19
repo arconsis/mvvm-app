@@ -29,8 +29,9 @@ class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     private val user by lazy <User> { arguments.getParcelable(ARG_USER) }
     private val viewModel by Herder("notes") {
-        val notesSyncRepository = (appContext() as MvvmNoteApplication).notesBackgroundSync
-        val noteService = NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()), AndroidSchedulers.mainThread())
+        val notesSyncRepository = (appContext() as MvvmNoteApplication).notesSyncService
+        val noteService = NoteService(EntityService(appContext(), NoteDb::class.java),
+                NetworkChecker(appContext()), AndroidSchedulers.mainThread())
         NotesViewModel(user, noteService, notesSyncRepository)
     }
     private lateinit var adapter: NoteAdapter
