@@ -4,16 +4,17 @@ import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.NotesResponse
 import com.arconsis.mvvmnotesample.data.Result
 import com.arconsis.mvvmnotesample.data.User
+import com.arconsis.mvvmnotesample.db.NoteDao
 import com.arconsis.mvvmnotesample.db.NoteDb
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.retrofit
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
-import org.droitateddb.EntityService
 import retrofit2.Response
+import kotlin.concurrent.thread
 
-class NoteService(private val noteEntityService: EntityService<NoteDb>,
+class NoteService(private val noteDao: NoteDao,
                   private val networkChecker: NetworkChecker,
                   private val observingScheduler: Scheduler,
                   private val subscribeScheduler: Scheduler = Schedulers.io(),
@@ -44,15 +45,16 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>,
     }
 
     fun readNotesFromLocalDatabase(): List<NoteDto> {
-        val db = noteEntityService.get()
+        val db = noteDao.getAllNotes()
         return db.map { (id, title, message, userId) ->
             NoteDto(id ?: -1, title, message, userId)
         }
     }
 
     fun clearNotes() {
-        noteEntityService.get().forEach { note -> noteEntityService.delete(note) }
-
+        thread {
+            noteDao.deleteNotes(noteDao.getAllNotes())
+        }
     }
 
     private fun handleNotesResponse(r: Response<NotesResponse>): List<NoteDto> {
@@ -64,16 +66,16 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>,
     }
 
     private fun updateLocalDatabase(notes: List<NoteDto>): List<NoteDto> {
-        noteEntityService.get().forEach { note -> noteEntityService.delete(note) }
+        noteDao.deleteNotes(noteDao.getAllNotes())
         val db = notes.map { note -> convert(note) }
-        noteEntityService.save(db)
+        noteDao.addNotes(db)
         return notes
     }
 
     private fun handleCreateResponse(r: Response<NoteDto>): Result<NoteDto> {
         return if (r.isSuccessful) {
             val noteDto = r.body()
-            noteEntityService.save(convert(noteDto))
+            noteDao.addNote(convert(noteDto))
             Result.success(noteDto)
         } else {
             Result.failure()

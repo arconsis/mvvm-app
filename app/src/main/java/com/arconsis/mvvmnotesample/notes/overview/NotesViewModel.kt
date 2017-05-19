@@ -1,17 +1,24 @@
 package com.arconsis.mvvmnotesample.notes.overview
 
+import android.arch.lifecycle.ViewModel
+import com.arconsis.mvvmnotesample.data.User
+import com.arconsis.mvvmnotesample.notes.NoteService
+import com.arconsis.mvvmnotesample.notes.sync.NotesSyncRepository
+
 /**
  * Created by Alexander on 05.05.2017.
  */
-class NotesViewModel(private val user: com.arconsis.mvvmnotesample.data.User, val noteService: com.arconsis.mvvmnotesample.notes.NoteService, private val notesSyncRepository: com.arconsis.mvvmnotesample.notes.sync.NotesSyncRepository) : org.androidobjectherder.HerdedObjectLifecycle {
+class NotesViewModel(private val user: User,
+                     val noteService: NoteService,
+                     private val notesSyncRepository: NotesSyncRepository) : ViewModel() {
     val disposable = io.reactivex.disposables.CompositeDisposable()
 
     var actions: com.arconsis.mvvmnotesample.notes.overview.NotesViewModel.NotesActions? = null
         set(value) {
             field = value
-            if(value != null){
+            if (value != null) {
                 notesSyncRepository.notify(this::readLocalNotes)
-            }else{
+            } else {
                 notesSyncRepository.notify(null)
             }
         }
@@ -36,7 +43,7 @@ class NotesViewModel(private val user: com.arconsis.mvvmnotesample.data.User, va
         actions?.onNotesAvailable(localNotes)
     }
 
-    override fun unherderd() {
+    override fun onCleared() {
         disposable.dispose()
     }
 

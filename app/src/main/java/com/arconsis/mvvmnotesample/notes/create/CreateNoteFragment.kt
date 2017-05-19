@@ -1,5 +1,8 @@
 package com.arconsis.mvvmnotesample.notes.create
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelStores
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -10,18 +13,17 @@ import android.view.ViewGroup
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.databinding.CreateNoteFragmentBinding
-import com.arconsis.mvvmnotesample.db.NoteDb
+import com.arconsis.mvvmnotesample.db.noteDao
 import com.arconsis.mvvmnotesample.notes.NoteService
-import com.arconsis.mvvmnotesample.util.*
+import com.arconsis.mvvmnotesample.util.NetworkChecker
+import com.arconsis.mvvmnotesample.util.ProgressDialogFragment
+import com.arconsis.mvvmnotesample.util.appContext
+import com.arconsis.mvvmnotesample.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
-import org.droitateddb.EntityService
 
 class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
 
-    private val viewModel by Herder("createdNote") {
-        val noteService = NoteService(EntityService(appContext(), NoteDb::class.java), NetworkChecker(appContext()), AndroidSchedulers.mainThread())
-        CreateNoteViewModel(arguments.getParcelable(ARG_USER), noteService)
-    }
+    private lateinit var viewModel: CreateNoteViewModel
     private var callback: CreateNoteCallback? = null
 
     override fun onAttach(context: Context?) {
@@ -38,6 +40,7 @@ class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        viewModel = ViewModelProvider(ViewModelStores.of(this), CreateNoteViewModelFactory())[CreateNoteViewModel::class.java]
         val binding = CreateNoteFragmentBinding.inflate(inflater, container, false)
         binding.vm = viewModel
         return binding.root
@@ -83,6 +86,14 @@ class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
 
     interface CreateNoteCallback {
         fun onNoteCreated(note: NoteDto)
+    }
+
+    private inner class CreateNoteViewModelFactory : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            val noteService = NoteService(context.noteDao(), NetworkChecker(appContext()), AndroidSchedulers.mainThread())
+            @Suppress("UNCHECKED_CAST")
+            return CreateNoteViewModel(arguments.getParcelable(ARG_USER), noteService) as T
+        }
     }
 
     companion object {

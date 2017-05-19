@@ -1,6 +1,9 @@
 package com.arconsis.mvvmnotesample.notes.overview
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelStores
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,16 +15,14 @@ import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.data.removeLocalUser
 import com.arconsis.mvvmnotesample.databinding.NotesFragmentBinding
-import com.arconsis.mvvmnotesample.db.NoteDb
+import com.arconsis.mvvmnotesample.db.noteDao
 import com.arconsis.mvvmnotesample.login.LoginActivity
 import com.arconsis.mvvmnotesample.notes.NoteService
 import com.arconsis.mvvmnotesample.notes.create.CreateNoteActivity
-import com.arconsis.mvvmnotesample.util.Herder
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.appContext
 import com.arconsis.mvvmnotesample.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
-import org.droitateddb.EntityService
 
 /**
  * Created by Alexander on 05.05.2017.
@@ -29,15 +30,11 @@ import org.droitateddb.EntityService
 class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     private val user by lazy <User> { arguments.getParcelable(ARG_USER) }
-    private val viewModel by Herder("notes") {
-        val notesSyncRepository = (appContext() as MvvmNoteApplication).notesSyncService
-        val noteService = NoteService(EntityService(appContext(), NoteDb::class.java),
-                NetworkChecker(appContext()), AndroidSchedulers.mainThread())
-        NotesViewModel(user, noteService, notesSyncRepository)
-    }
+    private lateinit var viewModel: NotesViewModel
     private lateinit var adapter: NoteAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        viewModel = ViewModelProvider(ViewModelStores.of(this), NotesViewModelFactory())[NotesViewModel::class.java]
         setHasOptionsMenu(true)
         adapter = NoteAdapter()
 
@@ -93,6 +90,17 @@ class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     override fun onFailure() {
         toast("A failure occurred")
+    }
+
+    private inner class NotesViewModelFactory : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>?): T {
+            val notesSyncRepository = (appContext() as MvvmNoteApplication).notesSyncService
+            val noteService = NoteService(context.noteDao(),
+                    NetworkChecker(appContext()), AndroidSchedulers.mainThread())
+            @Suppress("UNCHECKED_CAST")
+            return NotesViewModel(user, noteService, notesSyncRepository) as T
+        }
+
     }
 
     companion object {

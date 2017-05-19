@@ -6,12 +6,11 @@ import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.getLocalUser
 import com.arconsis.mvvmnotesample.data.isLocalUserPresent
-import com.arconsis.mvvmnotesample.db.NoteDb
+import com.arconsis.mvvmnotesample.db.noteDao
 import com.arconsis.mvvmnotesample.notes.NoteService
 import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.google.android.gms.gcm.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import org.droitateddb.EntityService
 import java.lang.Exception
 
 /**
@@ -21,7 +20,7 @@ class NotesGcmTaskService : GcmTaskService() {
     private val LOG_TAG = NotesGcmTaskService::class.java.simpleName
 
     private val notesService by lazy {
-        NoteService(EntityService<NoteDb>(applicationContext, NoteDb::class.java),
+        NoteService(noteDao(),
                 NetworkChecker(applicationContext), AndroidSchedulers.mainThread())
     }
 

@@ -1,5 +1,6 @@
 package com.arconsis.mvvmnotesample.notes.create
 
+import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.Result
@@ -7,12 +8,11 @@ import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.notes.NoteService
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import org.androidobjectherder.HerdedObjectLifecycle
 
 /**
  * Created by Alexander on 08.05.2017.
  */
-class CreateNoteViewModel(private val user: User, private val noteService: NoteService) : HerdedObjectLifecycle {
+class CreateNoteViewModel(private val user: User, private val noteService: NoteService) : ViewModel() {
     var title = ""
     var message = ""
     var actions: CreateNoteActions? = null
@@ -36,7 +36,7 @@ class CreateNoteViewModel(private val user: User, private val noteService: NoteS
         }
     }
 
-    override fun unherderd() {
+    override fun onCleared() {
         disposables.dispose()
     }
 

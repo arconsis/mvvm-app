@@ -3,9 +3,6 @@ package com.arconsis.mvvmnotesample.util
 import android.content.Context
 import android.support.v4.app.Fragment
 import android.widget.Toast
-import org.androidobjectherder.ObjectHerder
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /**
  * Created by Alexander on 04.05.2017.
@@ -19,18 +16,3 @@ fun Fragment.toast(text: String, duration: Int = Toast.LENGTH_LONG) {
 }
 
 fun Fragment.appContext(): Context = this.context.applicationContext
-
-class Herder<out T>(private val id: String? = null, private val block: () -> T) : ReadOnlyProperty<Fragment, T> {
-
-    private var value: T? = null
-
-    override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
-        if (value == null) {
-            value = ObjectHerder.createOrReuseObject(thisRef, id) {
-                block()
-            }
-        }
-        return value!!
-    }
-
-}

@@ -1,19 +1,13 @@
 package com.arconsis.mvvmnotesample.db
 
-import org.droitateddb.entity.Column
-import org.droitateddb.entity.Entity
-import org.droitateddb.entity.PrimaryKey
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 
-@Entity
+
+@Entity(tableName = "Note")
 data class NoteDb(
-        @PrimaryKey
-        @Column
+        @PrimaryKey(autoGenerate = true)
         var id: Int?,
-        @Column
         var title: String,
-        @Column
         var message: String,
-        @Column
-        var userId: Int) {
-    constructor() : this(-1, "", "", -1)
-}
+        var userId: Int)

@@ -30,7 +30,7 @@ class LoginFragment : Fragment(), LoginViewModel.LoginActions {
     private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        loginViewModel = ViewModelProvider(ViewModelStores.of(this), LoginViewModelFactory()).get(LoginViewModel::class.java)
+        loginViewModel = ViewModelProvider(ViewModelStores.of(this), LoginViewModelFactory())[LoginViewModel::class.java]
 
         val binding = LoginFragmentBinding.inflate(inflater, container, false)
         binding.vm = loginViewModel
