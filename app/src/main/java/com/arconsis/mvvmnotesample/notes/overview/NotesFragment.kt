@@ -9,18 +9,17 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
-import com.arconsis.mvvmnotesample.MvvmNoteApplication
 import com.arconsis.mvvmnotesample.R
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.data.removeLocalUser
 import com.arconsis.mvvmnotesample.databinding.NotesFragmentBinding
-import com.arconsis.mvvmnotesample.db.noteDao
 import com.arconsis.mvvmnotesample.login.LoginActivity
 import com.arconsis.mvvmnotesample.notes.NoteService
 import com.arconsis.mvvmnotesample.notes.create.CreateNoteActivity
-import com.arconsis.mvvmnotesample.util.NetworkChecker
-import com.arconsis.mvvmnotesample.util.appContext
+import com.arconsis.mvvmnotesample.util.networkChecker
+import com.arconsis.mvvmnotesample.util.noteDao
+import com.arconsis.mvvmnotesample.util.notesSyncRepository
 import com.arconsis.mvvmnotesample.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 
@@ -94,11 +93,9 @@ class NotesFragment : Fragment(), NotesViewModel.NotesActions {
 
     private inner class NotesViewModelFactory : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>?): T {
-            val notesSyncRepository = (appContext() as MvvmNoteApplication).notesSyncService
-            val noteService = NoteService(context.noteDao(),
-                    NetworkChecker(appContext()), AndroidSchedulers.mainThread())
+            val noteService = NoteService(context.noteDao, context.networkChecker, AndroidSchedulers.mainThread())
             @Suppress("UNCHECKED_CAST")
-            return NotesViewModel(user, noteService, notesSyncRepository) as T
+            return NotesViewModel(user, noteService, context.notesSyncRepository) as T
         }
 
     }

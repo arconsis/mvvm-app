@@ -13,11 +13,10 @@ import android.view.ViewGroup
 import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.databinding.CreateNoteFragmentBinding
-import com.arconsis.mvvmnotesample.db.noteDao
 import com.arconsis.mvvmnotesample.notes.NoteService
-import com.arconsis.mvvmnotesample.util.NetworkChecker
 import com.arconsis.mvvmnotesample.util.ProgressDialogFragment
-import com.arconsis.mvvmnotesample.util.appContext
+import com.arconsis.mvvmnotesample.util.networkChecker
+import com.arconsis.mvvmnotesample.util.noteDao
 import com.arconsis.mvvmnotesample.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 
@@ -90,7 +89,7 @@ class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
 
     private inner class CreateNoteViewModelFactory : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val noteService = NoteService(context.noteDao(), NetworkChecker(appContext()), AndroidSchedulers.mainThread())
+            val noteService = NoteService(context.noteDao, context.networkChecker, AndroidSchedulers.mainThread())
             @Suppress("UNCHECKED_CAST")
             return CreateNoteViewModel(arguments.getParcelable(ARG_USER), noteService) as T
         }

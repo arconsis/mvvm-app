@@ -14,5 +14,3 @@ abstract class NoteDatabase : RoomDatabase() {
 }
 
 fun createNoteDatabase(context: Context): NoteDatabase = Room.databaseBuilder(context, NoteDatabase::class.java, "note_db").build()
-
-fun Context.noteDao() = createNoteDatabase(applicationContext).noteDao()

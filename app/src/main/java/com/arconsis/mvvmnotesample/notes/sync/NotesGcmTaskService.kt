@@ -6,9 +6,9 @@ import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.getLocalUser
 import com.arconsis.mvvmnotesample.data.isLocalUserPresent
-import com.arconsis.mvvmnotesample.db.noteDao
 import com.arconsis.mvvmnotesample.notes.NoteService
-import com.arconsis.mvvmnotesample.util.NetworkChecker
+import com.arconsis.mvvmnotesample.util.networkChecker
+import com.arconsis.mvvmnotesample.util.noteDao
 import com.google.android.gms.gcm.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.lang.Exception
@@ -20,8 +20,7 @@ class NotesGcmTaskService : GcmTaskService() {
     private val LOG_TAG = NotesGcmTaskService::class.java.simpleName
 
     private val notesService by lazy {
-        NoteService(noteDao(),
-                NetworkChecker(applicationContext), AndroidSchedulers.mainThread())
+        NoteService(noteDao, networkChecker, AndroidSchedulers.mainThread())
     }
 
     override fun onInitializeTasks() {
