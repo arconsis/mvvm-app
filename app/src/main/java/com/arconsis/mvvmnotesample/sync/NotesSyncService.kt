@@ -14,23 +14,23 @@ class NotesSyncService(val context: Context) : NotesSyncRepository {
     private var notesUpdatedReceiver: NotesUpdatedReceiver? = null
 
     override fun schedule() {
-        notesUpdatedReceiver = NotesUpdatedReceiver(null)
-        LocalBroadcastManager.getInstance(context)
-                .registerReceiver(notesUpdatedReceiver, IntentFilter(NotesGcmTaskService.BROADCASTS_NOTES_UPDATED))
         NotesGcmTaskService.schedule(context)
     }
 
     override fun unschedule() {
         NotesGcmTaskService.unschedule(context)
-        val receiver = notesUpdatedReceiver
-        if(receiver != null){
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
-            receiver.update = null
-        }
     }
 
     override fun notify(notificationHandler: (() -> Unit)?) {
-        notesUpdatedReceiver?.update = notificationHandler
+
+        if(notificationHandler != null && notesUpdatedReceiver == null){
+            notesUpdatedReceiver = NotesUpdatedReceiver(notificationHandler)
+            LocalBroadcastManager.getInstance(context)
+                    .registerReceiver(notesUpdatedReceiver, IntentFilter(NotesGcmTaskService.BROADCASTS_NOTES_UPDATED))
+        }else if(notesUpdatedReceiver != null) {
+            notesUpdatedReceiver?.update = null
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(notesUpdatedReceiver)
+        }
     }
 
     class NotesUpdatedReceiver(var update: (() -> Unit)?) : BroadcastReceiver() {
