@@ -21,7 +21,7 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>,
 
     fun getNotesForUser(user: User): Observable<List<NoteDto>> {
         if (networkChecker.isNetworkAvailable()) {
-            return Observable.fromCallable { noteApi.getNotesByUserId(user.id).execute() }
+            return noteApi.getNotesByUserId(user.id)
                     .subscribeOn(subscribeScheduler)
                     .map(this::handleNotesResponse)
                     .observeOn(observingScheduler)
@@ -34,7 +34,7 @@ class NoteService(private val noteEntityService: EntityService<NoteDb>,
 
     fun createNote(title: String, message: String, user: User): Observable<Result<NoteDto>> {
         if (networkChecker.isNetworkAvailable()) {
-            return Observable.fromCallable { noteApi.createNote(title, message, user.id).execute() }
+            return noteApi.createNote(title, message, user.id)
                     .subscribeOn(subscribeScheduler)
                     .map(this::handleCreateResponse)
                     .observeOn(observingScheduler)

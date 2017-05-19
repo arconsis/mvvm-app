@@ -1,4 +1,4 @@
-package com.arconsis.mvvmnotesample.create
+package com.arconsis.mvvmnotesample.notes.create
 
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.NoteDto

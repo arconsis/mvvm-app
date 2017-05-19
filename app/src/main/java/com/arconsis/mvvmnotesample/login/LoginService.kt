@@ -17,14 +17,14 @@ open class LoginService(private val observingScheduler: Scheduler,
                         private val loginApi: LoginApi = retrofit().create(LoginApi::class.java)) {
 
     open fun login(username: String, password: String): Single<Result<User>> {
-        return Single.fromCallable { loginApi.login(username, password).execute() }
+        return loginApi.login(username, password)
                 .subscribeOn(subscriberScheduler)
                 .map { r -> mapUserIdToUserResult(r, username, password) { code -> code == 200 } }
                 .observeOn(observingScheduler)
     }
 
     open fun register(username: String, password: String): Single<Result<User>> {
-        return Single.fromCallable { loginApi.register(username, password).execute() }
+        return loginApi.register(username, password)
                 .subscribeOn(subscriberScheduler)
                 .map { r -> mapUserIdToUserResult(r, username, password) { code -> code == 201 } }
                 .observeOn(observingScheduler)
