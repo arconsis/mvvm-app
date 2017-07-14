@@ -1,5 +1,5 @@
 # mvvm-app
-This app is a demonstration of an Android app using an MVVM approach
+This app is a demonstration of an Android app using a MVVM approach
 
 It is a simple app for taking notes and writing them to a backend.
 Technologies used are:
@@ -10,7 +10,7 @@ Technologies used are:
  - DroitatedDB
  
  ## ObjectHerder
- To be able to compile to app you need the the ObjectHerder in your local Maven Repository.
+ To be able to compile the app you need the ObjectHerder in your local Maven Repository.
  Get the ObjectHerder from here: https://github.com/arconsis/objectherder-android
  Checkout the develop branch and install the artifact using: gradlew install
  
