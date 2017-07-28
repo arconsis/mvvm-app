@@ -1,12 +1,12 @@
 package com.arconsis.mvvmnotesample.login.vm
 
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.arconsis.mvvmnotesample.data.Result
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.login.LoginService
 import com.arconsis.mvvmnotesample.notes.sync.NotesSyncRepository
+import com.arconsis.mvvmnotesample.util.SingleLiveEvent
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
@@ -16,7 +16,7 @@ import io.reactivex.disposables.Disposable
 class LoginViewModel(localUser: User?, private val loginService: LoginService, private val notesSyncRepository: NotesSyncRepository) : ViewModel() {
     var username = ""
     var password = ""
-    val processingState = MutableLiveData<ProcessingStateChangedEvent<User>>()
+    val processingState = SingleLiveEvent<ProcessingStateChangedEvent<User>>()
     val disposable = CompositeDisposable()
 
     init {
@@ -71,6 +71,3 @@ class LoginViewModel(localUser: User?, private val loginService: LoginService, p
     }
 }
 
-enum class ProcessingState {
-    Failed, Processing, DataMissing, Login
-}

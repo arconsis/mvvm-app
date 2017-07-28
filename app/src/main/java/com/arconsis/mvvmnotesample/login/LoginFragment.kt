@@ -27,11 +27,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 class LoginFragment : LifecycleFragment() {
 
     private lateinit var loginViewModel: LoginViewModel
-    private var currentState: ProcessingState? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        currentState = savedInstanceState?.getSerializable(SAVED_CURRENT_STATE) as ProcessingState?
-
         loginViewModel = ViewModelProvider(ViewModelStores.of(this), LoginViewModelFactory())[LoginViewModel::class.java]
         loginViewModel.processingState.observe(this, Observer<ProcessingStateChangedEvent<User>>(this::handleProcessingStateChange))
         val binding = LoginFragmentBinding.inflate(inflater, container, false)
@@ -39,17 +36,8 @@ class LoginFragment : LifecycleFragment() {
         return binding.root
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        outState?.putSerializable(SAVED_CURRENT_STATE, currentState)
-    }
-
     private fun handleProcessingStateChange(stateChangedEvent: ProcessingStateChangedEvent<User>?) {
         val state = stateChangedEvent?.state
-        if (state == currentState) {
-            return
-        }
-        currentState = state
         withProgress {
             when (state) {
                 ProcessingState.Processing -> ProgressDialogFragment.create(getString(R.string.running)).show(fragmentManager, PROGRESS_TAG)
