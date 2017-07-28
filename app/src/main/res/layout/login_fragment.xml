@@ -6,7 +6,7 @@
 
 		<variable
 			name="vm"
-			type="com.arconsis.mvvmnotesample.login.LoginViewModel" />
+			type="com.arconsis.mvvmnotesample.login.vm.LoginViewModel" />
 	</data>
 
 	<android.support.constraint.ConstraintLayout
