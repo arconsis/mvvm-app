@@ -22,12 +22,11 @@ class NotesSyncService(val context: Context) : NotesSyncRepository {
     }
 
     override fun notify(notificationHandler: (() -> Unit)?) {
-
-        if(notificationHandler != null && notesUpdatedReceiver == null){
+        if (notificationHandler != null && notesUpdatedReceiver == null) {
             notesUpdatedReceiver = NotesUpdatedReceiver(notificationHandler)
             LocalBroadcastManager.getInstance(context)
                     .registerReceiver(notesUpdatedReceiver, IntentFilter(NotesGcmTaskService.BROADCASTS_NOTES_UPDATED))
-        }else if(notesUpdatedReceiver != null) {
+        } else if (notesUpdatedReceiver != null) {
             notesUpdatedReceiver?.update = null
             LocalBroadcastManager.getInstance(context).unregisterReceiver(notesUpdatedReceiver)
         }

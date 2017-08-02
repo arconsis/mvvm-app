@@ -1,12 +1,9 @@
 package com.arconsis.mvvmnotesample.notes.create
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelStores
+import android.arch.lifecycle.*
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +11,16 @@ import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.databinding.CreateNoteFragmentBinding
 import com.arconsis.mvvmnotesample.notes.NoteService
+import com.arconsis.mvvmnotesample.notes.create.vm.CreateNoteViewModel
+import com.arconsis.mvvmnotesample.notes.create.vm.CreateState
+import com.arconsis.mvvmnotesample.notes.create.vm.CreateStateChangedEvent
 import com.arconsis.mvvmnotesample.util.ProgressDialogFragment
 import com.arconsis.mvvmnotesample.util.networkChecker
 import com.arconsis.mvvmnotesample.util.noteDao
 import com.arconsis.mvvmnotesample.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 
-class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
-
+class CreateNoteFragment : LifecycleFragment(), Observer<CreateStateChangedEvent<NoteDto>> {
     private lateinit var viewModel: CreateNoteViewModel
     private var callback: CreateNoteCallback? = null
 
@@ -40,39 +39,32 @@ class CreateNoteFragment : Fragment(), CreateNoteViewModel.CreateNoteActions {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         viewModel = ViewModelProvider(ViewModelStores.of(this), CreateNoteViewModelFactory())[CreateNoteViewModel::class.java]
+        viewModel.stateChangeEvent.observe(this, this)
         val binding = CreateNoteFragmentBinding.inflate(inflater, container, false)
         binding.vm = viewModel
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.actions = this
-    }
-
-    override fun onStop() {
-        viewModel.actions = null
-        super.onStop()
-    }
-
-    override fun onNoteCreated(note: NoteDto) {
+    override fun onChanged(stateChangedEvent: CreateStateChangedEvent<NoteDto>?) {
         withProgress {
+            when (stateChangedEvent?.state) {
+                CreateState.Failure -> toast("Note could not be created. Please try again")
+                CreateState.Processing -> ProgressDialogFragment.create("Creating note...").show(fragmentManager, PROGRESS_TAG)
+                CreateState.DataMissing -> toast("Please enter a title and a message")
+                CreateState.Created -> handleCreated(stateChangedEvent.data)
+                else -> {
+                    // if null do nothing
+                }
+            }
+        }
+    }
+
+    private fun handleCreated(note: NoteDto?) {
+        if (note == null) {
+            toast("Note could not be created. Please try again")
+        } else {
             callback?.onNoteCreated(note)
         }
-    }
-
-    override fun onFailure() {
-        withProgress {
-            toast("Note could not be created. Please try again")
-        }
-    }
-
-    override fun onProcessing() {
-        ProgressDialogFragment.create("Creating note...").show(fragmentManager, PROGRESS_TAG)
-    }
-
-    override fun onDataMissing() {
-        toast("Please enter a title and a message")
     }
 
     private fun withProgress(block: () -> Unit) {

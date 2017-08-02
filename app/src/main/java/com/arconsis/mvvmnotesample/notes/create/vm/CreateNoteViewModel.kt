@@ -1,4 +1,4 @@
-package com.arconsis.mvvmnotesample.notes.create
+package com.arconsis.mvvmnotesample.notes.create.vm
 
 import android.arch.lifecycle.ViewModel
 import android.util.Log
@@ -6,6 +6,7 @@ import com.arconsis.mvvmnotesample.data.NoteDto
 import com.arconsis.mvvmnotesample.data.Result
 import com.arconsis.mvvmnotesample.data.User
 import com.arconsis.mvvmnotesample.notes.NoteService
+import com.arconsis.mvvmnotesample.util.SingleLiveEvent
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
@@ -15,24 +16,16 @@ import io.reactivex.disposables.Disposable
 class CreateNoteViewModel(private val user: User, private val noteService: NoteService) : ViewModel() {
     var title = ""
     var message = ""
-    var actions: CreateNoteActions? = null
-        set(value) {
-            field = value
-            notifyNoteCreatedIfPresent()
-        }
-
-    var createdNote: NoteDto? = null
+    val stateChangeEvent = SingleLiveEvent<CreateStateChangedEvent<NoteDto>>()
     private val disposables = CompositeDisposable()
-    private var processing = false
 
     fun onAddImage() {
-
+        // TODO implement me
     }
 
     fun onCreateNote() {
         process {
-            noteService.createNote(title, message, user)
-                    .subscribe(this::onNoteCreated, this::onError, {}, this::onSubscribe)
+            noteService.createNote(title, message, user).subscribe(this::onNoteCreated, this::onError, {}, this::onSubscribe)
         }
     }
 
@@ -50,39 +43,22 @@ class CreateNoteViewModel(private val user: User, private val noteService: NoteS
 
     private fun onNoteCreated(result: Result<NoteDto>) {
         if (result.success && result.value != null) {
-            createdNote = result.value
-            actions?.onNoteCreated(result.value)
+            stateChangeEvent.value = CreateStateChangedEvent(CreateState.Created, result.value)
         } else {
-            actions?.onFailure()
+            stateChangeEvent.value = CreateStateChangedEvent(CreateState.Failure)
         }
     }
 
     private fun process(block: () -> Unit) {
         if (isDataPresent()) {
-            processing = true
-            actions?.onProcessing()
+            stateChangeEvent.value = CreateStateChangedEvent(CreateState.Processing)
             block()
         } else {
-            actions?.onDataMissing()
+            stateChangeEvent.value = CreateStateChangedEvent(CreateState.DataMissing)
         }
     }
 
     private fun isDataPresent(): Boolean = title.isNotEmpty() && message.isNotEmpty()
-
-    private fun notifyNoteCreatedIfPresent() {
-        val note = createdNote
-        if (note != null) {
-            actions?.onNoteCreated(note)
-        }
-    }
-
-
-    interface CreateNoteActions {
-        fun onNoteCreated(note: NoteDto)
-        fun onFailure()
-        fun onProcessing()
-        fun onDataMissing()
-    }
 
     companion object {
         private val TAG = CreateNoteViewModel::class.java.simpleName
